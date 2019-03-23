@@ -1,7 +1,8 @@
+require("./app/models/db.connection");
 const express = require("express");
 
-let CONFIG = require("./config");
-let authRoutes = require("./routes/auth.routes");
+let CONFIG = require("./app/config");
+let authRoutes = require("./app/routes/auth.routes");
 let app = express();
 
 app.use("/connect_and_share", authRoutes);
