@@ -11,11 +11,16 @@ let userProfileSchema = new Schema({
         type: String,
         required: true
     },
+    "phoneNo": String,
     "password": {
         type: String,
         required: true
     },
-    
+    "isCompany": {
+        type: Boolean,
+        required: true
+    },
+    "companyId": [String]
 });
 
 module.exports = mongoose.model("UserProfile", userProfileSchema, "user_profile");
