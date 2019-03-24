@@ -1,6 +1,16 @@
 const mongoose = require("mongoose");
+const shortId = require("shortid");
+
+let dateTime = require("../shared/date_time");
 
 let Schema = mongoose.Schema;
+
+let empCompanySchema = new Schema({
+    "companyId": String,
+    "designation": String,
+    "companyName": String,
+    "currentlyWorking": Boolean
+});
 
 let userProfileSchema = new Schema({
     "name": {
@@ -9,7 +19,8 @@ let userProfileSchema = new Schema({
     },
     "userName": {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     "phoneNo": String,
     "password": {
@@ -20,7 +31,20 @@ let userProfileSchema = new Schema({
         type: Boolean,
         required: true
     },
-    "companyId": [String]
+    "userId": {
+        type: String,
+        "default": shortId.generate
+    },
+    "companyId": [String],
+    "empCompany": [empCompanySchema],
+    "date": {
+        type: String,
+        "default": dateTime.getDateTime().date,
+    },
+    "time": {
+        type: String,
+        "default": dateTime.getDateTime().time,
+    }
 });
 
 module.exports = mongoose.model("UserProfile", userProfileSchema, "user_profile");

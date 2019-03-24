@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 let UserProfile = mongoose.model("UserProfile");
 let UserCompany = mongoose.model("UserCompany");
 
+
 module.exports.addOneUser = (req, res, next) => {
     let body = req.body;
 
@@ -16,7 +17,7 @@ module.exports.addOneUser = (req, res, next) => {
         "userName": body.userName,
         "password": hashPassword,
         "phoneNo": body.phoneNo,
-        "isCompany": body.companyName
+        "isCompany": body.isCompany
     });
 
     newUserProfile
@@ -35,7 +36,7 @@ module.exports.addOneUser = (req, res, next) => {
                 console.log("User Profile added Successfully");
                 console.log(response);
                 res
-                    .status(404)
+                    .status(200)
                     .send({
                         "auth": true,
                         "message": "User Profile added Successfully",
@@ -43,17 +44,4 @@ module.exports.addOneUser = (req, res, next) => {
                     });
             }
         });
-}
-
-module.exports.addOneCompanyForOneUser = (req, res, next)=>{
-    let body = req.body;
-    let isCompany = true;
-
-    let newUserCompany = new UserCompany({
-        "companyName": body.companyName,
-        "companyAddress": body.companyAddress,
-        "areaOfWork": body.areaOfWork,
-        "description": body.description,
-        "companyId": 
-    });
 }
