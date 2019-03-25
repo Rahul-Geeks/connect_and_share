@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 const shortId = require("shortid");
 
+let dateTime = require("../shared/date_time");
 
 let Schema = mongoose.Schema;
 
 let empViewsSchema = new Schema({
     "userId": String,
-    "userName": String,
     "view": String
 });
 
@@ -21,8 +21,14 @@ let discussionsSchema = new Schema({
     },
     "description": String,
     "empViews": [empViewsSchema],
-    "date": String,
-    "time": String
+    "date": {
+        type: String,
+        default: dateTime.getDateTime().date
+    },
+    "time": {
+        type: String,
+        default: dateTime.getDateTime().time
+    }
 });
 
 module.exports = mongoose.model("Discussions", discussionsSchema, "discussions");

@@ -9,7 +9,11 @@ let empCompanySchema = new Schema({
     "companyId": String,
     "designation": String,
     "companyName": String,
-    "currentlyWorking": Boolean
+    "currentlyWorking": Boolean,
+    "joiningDate": String,
+    "joiningTime": String,
+    "leavingDate": String,
+    "leavingTime": String
 });
 
 let userProfileSchema = new Schema({

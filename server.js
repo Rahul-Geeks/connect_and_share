@@ -1,18 +1,89 @@
 require("./app/models/db.connection");
 const express = require("express");
 const bodyParser = require("body-parser");
+let app = express();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 
 let CONFIG = require("./app/config");
 let authRoutes = require("./app/routes/auth.routes");
 let userCompanyRoutes = require("./app/routes/user_company.routes");
+let mailingRoutes = require("./app/routes/mailing.routes");
 
-let app = express();
 app.use(bodyParser.json({ type: "application/json" }));
 
 app.use("/connect_and_share", authRoutes);
 app.use("/connect_and_share/company", userCompanyRoutes);
+app.use("/connect_and_share/user/mail", mailingRoutes);
 
-app.listen(CONFIG.PORT, CONFIG.HOST, (error) => {
+// io.emit('some event', { for: 'everyone' });
+
+let numUsers = 0;
+
+io.on('connection', (socket) => {
+    var addedUser = false;
+
+    // when the client emits 'chat message', this listens and executes
+    socket.on('chat message', (data) => {
+        // we tell the client to execute 'chat message'
+        socket.broadcast.emit('chat message', {
+            username: socket.username,
+            message: data
+        });
+    });
+
+    // when the client emits 'add user', this listens and executes
+    socket.on('add user', (username) => {
+        if (addedUser) return;
+
+        // we store the username in the socket session for this client
+        socket.username = username;
+        ++numUsers;
+        addedUser = true;
+        socket.emit('login', {
+            numUsers: numUsers
+        });
+        // echo globally (all clients) that a person has connected
+        socket.broadcast.emit('user joined', {
+            username: socket.username,
+            numUsers: numUsers
+        });
+    });
+
+    // when the client emits 'typing', we broadcast it to others
+    socket.on('typing', () => {
+        socket.broadcast.emit('typing', {
+            username: socket.username
+        });
+    });
+
+    // when the client emits 'stop typing', we broadcast it to others
+    socket.on('stop typing', () => {
+        socket.broadcast.emit('stop typing', {
+            username: socket.username
+        });
+    });
+
+    // when the user disconnects.. perform this
+    socket.on('disconnect', () => {
+        if (addedUser) {
+            --numUsers;
+
+            // echo globally that this client has left
+            socket.broadcast.emit('user left', {
+                username: socket.username,
+                numUsers: numUsers
+            });
+        }
+    });
+});
+
+
+// socket.on("disconnect", function () {
+//     io.emit("User Disconnected");
+// });
+
+http.listen(CONFIG.PORT, CONFIG.HOST, (error) => {
     if (error) {
         console.log(`Error while connecting to the server with port ${CONFIG.PORT}`);
         console.log(error);

@@ -9,6 +9,9 @@ let dbPwd = "password1";
 let dbName = "connect_and_share";
 let authSource = "connect_and_share";
 
+// secret key for token generation at the time of login
+let scrtKey = "Rahul And Reshmi";
+
 module.exports = {
     PORT: port,
     HOST: host,
@@ -16,5 +19,6 @@ module.exports = {
     DBPWD: dbPwd,
     DBNAME: dbName,
     DBURL: dbUrl,
-    authSource: authSource
+    authSource: authSource,
+    SCRTKEY: scrtKey
 }

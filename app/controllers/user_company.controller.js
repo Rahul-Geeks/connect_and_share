@@ -57,7 +57,6 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
             .save((error, response) => {
                 if (error) {
                     console.log("Error while adding a user company");
-                    console.log(error);
                     res
                         .status(404)
                         .send({
@@ -75,7 +74,6 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
                         .updateOne({ "userId": body.userId }, userProfileUpdate, (error, isUpdate) => {
                             if (error) {
                                 console.log("Error while updating a user profile");
-                                console.log(error);
                                 res
                                     .status(404)
                                     .send({
@@ -85,9 +83,7 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
                                     });
                             } else {
                                 console.log("User Company added Successfully");
-                                console.log(response);
                                 console.log("User Profile Updated Successfully with adding company");
-                                console.log(isUpdate);
                                 res
                                     .status(200)
                                     .send({
@@ -116,7 +112,6 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
         .findOne({ "companyId": body.companyId }, (error, company) => {
             if (error) {
                 console.log("Error while searching a user company");
-                // console.log(error);
                 res
                     .status(404)
                     .send({
@@ -125,13 +120,10 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                         "error": error
                     });
             } else {
-                // console.log("something else");
-                // console.log(company.userEmp);
                 UserProfile
                     .findOne({ "userName": body.userName }, (error, user) => {
                         if (error) {
                             console.log("Error while searching a user profile");
-                            // console.log(error);
                             res
                                 .status(404)
                                 .send({
@@ -148,24 +140,6 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                                     "message": "User Profile with the given User Name not found",
                                 });
                         } else {
-                            UserCompany
-                            .findOne({"userEmp": body.companyId})
-                            .select("userEmp")
-                            .exec((error, userEmp)=>{
-                                if (error) {
-                                    console.log("Error while searching a user profile");
-                                    // console.log(error);
-                                    res
-                                        .status(404)
-                                        .send({
-                                            "auth": false,
-                                            "message": "Error while searching a user profile",
-                                            "error": error
-                                        });
-                                }else{
-
-                                }
-                            });
                             let isEmp = company.userEmp.find((element) => {
                                 if (element.userName === body.userName) {
                                     console.log("Its present");
@@ -174,21 +148,14 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                             });
                             if (isEmp != true) {
                                 let updateCompany = {
-                                    "$push": {
-                                        "userEmp": {
-                                            "userId": user.userId,
-                                            "userName": user.userName,
-                                            "designation": body.designation,
-                                            "joiningDate": dateTime.getDateTime().date,
-                                            "joiningTime": dateTime.getDateTime().time
-                                        }
+                                    "userEmpIds": {
+                                        "$push": body.userId
                                     }
                                 }
                                 UserCompany
-                                    .updateOne({ "companyId": body.companyId }, updateCompany, (error, isCompanyUpdate) => {
+                                    .updateOne({ "companyId": body.companyId, "userEmpIds": { "$in": body.userId } }, updateCompany, (error, isCompanyUpdate) => {
                                         if (error) {
                                             console.log("Error while updating a user company");
-                                            // console.log(error);
                                             res
                                                 .status(404)
                                                 .send({
@@ -198,16 +165,15 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                                                 });
                                         } else {
                                             console.log("User Company updated Successfully");
-                                            // console.log(isCompanyUpdate);
-                                            // console.log(body);
-
                                             let updateUser = {
                                                 "$push": {
                                                     "empCompany": {
                                                         "companyId": company.companyId,
                                                         "designation": body.designation,
                                                         "companyName": company.companyName,
-                                                        "currentlyWorking": true
+                                                        "currentlyWorking": true,
+                                                        "joiningDate": dateTime.getDateTime().date,
+                                                        "joiningTime": dateTime.getDateTime().time
                                                     }
                                                 }
                                             }
@@ -215,7 +181,6 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                                                 .updateOne({ "userName": body.userName }, updateUser, (error, isUserUpdate) => {
                                                     if (error) {
                                                         console.log("Error while updating a user profile");
-                                                        // console.log(error);
                                                         res
                                                             .status(404)
                                                             .send({
@@ -225,7 +190,6 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
                                                             });
                                                     } else {
                                                         console.log("User Profile updated Successfully");
-                                                        // console.log(isUserUpdate);
                                                         res
                                                             .status(200)
                                                             .send({
@@ -254,15 +218,14 @@ module.exports.addOneEmpToOneCompany = (req, res, next) => {
 module.exports.removeEmpFromCompany = (req, res, next) => {
     let body = req.body;
     let companyUpdate = {
-        "userEmp": {
-            "$pull": { "userName": { "$all": body.userName } }
+        "$pull": {
+            "userEmpIds": { "userName": { "$in": body.userIds } }
         }
     }
     UserCompany
         .findOneAndUpdate({ "companyId": body.companyId }, companyUpdate, (error, isCompanyUpdated) => {
             if (error) {
                 console.log("Error while updating a user company");
-                console.log(error);
                 res
                     .status(404)
                     .send({
@@ -272,7 +235,6 @@ module.exports.removeEmpFromCompany = (req, res, next) => {
                     });
             } else {
                 console.log("The given user name/s of employee/s are successfully removed from the given company");
-                console.log(isCompanyUpdated);
                 res
                     .status(200)
                     .send({
