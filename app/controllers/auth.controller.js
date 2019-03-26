@@ -78,7 +78,8 @@ module.exports.userLogin = (req, res, next) => {
                         .send({
                             "auth": true,
                             "message": "User Logged-in Successfully",
-                            "token": token
+                            "token": token,
+                            "userProfile": user
                         });
                 } else {
                     console.log("Invalid Password !");
