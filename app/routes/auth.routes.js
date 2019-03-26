@@ -8,11 +8,6 @@ router
     .route("/add_one_user")
     .post(authCtrl.addOneUser);
 
-// Deletes User Profile
-router
-    .route("/delete_one_user")
-    .post(authCtrl.deleteOneUser);
-
 // Login for a user
 router
     .route("/user_login")

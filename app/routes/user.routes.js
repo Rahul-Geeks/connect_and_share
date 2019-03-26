@@ -8,4 +8,9 @@ router
     .route("/get_one_user")
     .post(userCtrl.getOneUser);
 
+// Deletes User Profile
+router
+    .route("/delete_one_user")
+    .post(authCtrl.deleteOneUser);
+
 module.exports = router;

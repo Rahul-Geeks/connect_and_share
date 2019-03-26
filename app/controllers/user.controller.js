@@ -35,3 +35,28 @@ module.exports.getOneUser = (req, res, next) => {
             }
         });
 }
+
+module.exports.deleteOneUser = (req, res, next) => {
+    let body = req.body;
+    UserProfile
+        .findOneAndDelete({ "userId": body.userId }, (error, response) => {
+            if (error) {
+                console.log("Error while deleting a user profile");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while deleting a user profile",
+                        "error": error
+                    });
+            } else {
+                console.log("User Profile deleted Successfully");
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "User Profile deleted Successfully",
+                    });
+            }
+        });
+}

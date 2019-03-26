@@ -13,10 +13,12 @@ router
     .route("/add_company_for_user")
     .post(userCompanyCtrl.addOneCompanyForOneUser);
 
+// Adds one employee to a company workspace using their 'userId' field
 router
     .route("/add_one_emp_to_one_company")
     .post(userCompanyCtrl.addOneEmpToOneCompany);
 
+// removes an employee from a specified company workspace
 router
     .route("/remove_emp_from_one_company")
     .post(userCompanyCtrl.removeEmpFromCompany);
