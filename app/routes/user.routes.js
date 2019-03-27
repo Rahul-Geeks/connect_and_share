@@ -1,6 +1,7 @@
 const express = require("express");
 
 let userCtrl = require("../controllers/user.controller");
+let authCtrl = require("../controllers/auth.controller");
 let router = express.Router();
 
 // Searches a user using their "userId" field
@@ -11,6 +12,6 @@ router
 // Deletes User Profile
 router
     .route("/delete_one_user")
-    .post(authCtrl.deleteOneUser);
+    .post(userCtrl.deleteOneUser);
 
 module.exports = router;

@@ -12,7 +12,7 @@ module.exports.addOneUser = (req, res, next) => {
 
     const saltRounds = 10;
     let salt = bcrypt.genSaltSync(saltRounds);
-    let hashPassword = bcrypt.hashSync("body.password", salt);
+    let hashPassword = bcrypt.hashSync(body.password, salt);
 
     let newUserProfile = new UserProfile({
         "name": body.name,
@@ -48,10 +48,12 @@ module.exports.addOneUser = (req, res, next) => {
 
 module.exports.userLogin = (req, res, next) => {
     let body = req.body;
+    console.log(body);
     UserProfile
-        .findOne({ "userName": "body.userName" }, (error, user) => {
+        .findOne({ "userName": body.userName }, (error, user) => {
             if (error) {
                 console.log("Error while searching a user profile");
+                console.log(error);
                 res
                     .status(404)
                     .send({
@@ -61,6 +63,7 @@ module.exports.userLogin = (req, res, next) => {
                     });
             } else if (!user) {
                 console.log("No User Present with the given user name");
+                console.log(user);
                 res
                     .status(404)
                     .send({
@@ -69,6 +72,7 @@ module.exports.userLogin = (req, res, next) => {
                     });
             } else {
                 console.log("User is present with the given user name");
+                console.log(body.password + " and " + user.password);
                 let isUserAuth = bcrypt.compareSync(body.password, user.password);
                 if (isUserAuth) {
                     console.log("User authentication successfull");
@@ -82,6 +86,7 @@ module.exports.userLogin = (req, res, next) => {
                             "userProfile": user
                         });
                 } else {
+                    console.log(isUserAuth);
                     console.log("Invalid Password !");
                     res
                         .status(404)

@@ -11,6 +11,12 @@ let userRoutes = require("./app/routes/user.routes");
 let userCompanyRoutes = require("./app/routes/user_company.routes");
 let mailingRoutes = require("./app/routes/mailing.routes");
 
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,x-access-token, Content-Type, Accept");
+    next();
+});
+
 app.use(bodyParser.json({ type: "application/json" }));
 
 app.use("/connect_and_share", authRoutes);
@@ -29,10 +35,7 @@ io.on('connection', (socket) => {
     // when the client emits 'new-message', this listens and executes
     socket.on('new-message', (message) => {
         console.log(message);
-        io.emit("new-message", {
-            // "userName": userName,
-            "message": message
-        });
+        io.emit("new-message", message);
         // we tell the client to execute 'new-message'
         // socket.broadcast.emit('new-message', {
         //     username: socket.username,
@@ -60,10 +63,9 @@ io.on('connection', (socket) => {
     // });
 
     // // when the client emits 'typing', we broadcast it to others
-    socket.on('typing', (data) => {
-        io.emit("typing", {
-            "userName": "Ram"
-        });
+    socket.on('typing', (typingStatus) => {
+        console.log(typingStatus);
+        io.emit("typing", typingStatus);
         // socket.broadcast.emit('typing', {
         //     username: socket.username
         // });
