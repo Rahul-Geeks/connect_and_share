@@ -33,9 +33,9 @@ io.on('connection', (socket) => {
     console.log("User Connected");
 
     // when the client emits 'new-message', this listens and executes
-    socket.on('new-message', (message) => {
-        console.log(message);
-        io.emit("new-message", message);
+    socket.on('new-message', (array) => {
+        console.log(array);
+        io.emit("new-message", array);
         // we tell the client to execute 'new-message'
         // socket.broadcast.emit('new-message', {
         //     username: socket.username,
