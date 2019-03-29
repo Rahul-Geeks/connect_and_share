@@ -33,15 +33,25 @@ io.on('connection', (socket) => {
     console.log("User Connected");
 
     // when the client emits 'new-message', this listens and executes
-    socket.on('new-message', (array) => {
-        console.log(array);
-        io.emit("new-message", array);
+    socket.on('new-message', (obj) => {
+        console.log(obj);
+        io.emit("new-message", obj);
         // we tell the client to execute 'new-message'
         // socket.broadcast.emit('new-message', {
         //     username: socket.username,
         //     message: message
         // });
         // socket.broadcast.emit('new-message', message);
+    });
+
+    socket.on("new-mail", (mail) => {
+        console.log("Mail came to server");
+        console.log(mail);
+        let sendMail = {
+            "subject": mail.subject,
+            "msg": mail.msg
+        }
+        io.to(mail.to).emit("new-mail", sendMail);
     });
 
     // // when the client emits 'add user', this listens and executes
@@ -65,10 +75,24 @@ io.on('connection', (socket) => {
     // // when the client emits 'typing', we broadcast it to others
     socket.on('typing', (typingStatus) => {
         console.log(typingStatus);
-        io.emit("typing", typingStatus);
+        socket.broadcast.emit("typing", typingStatus);
         // socket.broadcast.emit('typing', {
         //     username: socket.username
         // });
+    });
+
+    socket.on("join", (data) => {
+        console.log("In Join");
+        console.log(data);
+        socket.join(data);
+        console.log(socket.id);
+    });
+
+    socket.on("message-to-one", (obj) => {
+        console.log("In message_to_one");
+        console.log(obj);
+        io.to(obj.userId).emit("my-message", obj);
+        // io.sockets.in(obj.userId).emit("message-to-one", obj.array[1]);
     });
 
     // // when the client emits 'stop typing', we broadcast it to others
@@ -91,7 +115,6 @@ io.on('connection', (socket) => {
     //     }
     // });
 });
-
 
 // socket.on("disconnect", function () {
 //     io.emit("User Disconnected");

@@ -9,6 +9,11 @@ router
     .route("/get_one_user")
     .post(userCtrl.getOneUser);
 
+// Searches a userId using their "userName" field
+router
+    .route("/get_one_userId")
+    .post(userCtrl.getOneUserId);
+
 // Deletes User Profile
 router
     .route("/delete_one_user")

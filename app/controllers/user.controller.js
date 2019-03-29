@@ -36,6 +36,33 @@ module.exports.getOneUser = (req, res, next) => {
         });
 }
 
+module.exports.getOneUserId = (req, res, next) => {
+    let userName = req.body.userName;
+    UserProfile
+        .findOne({ "userName": userName }, "userId -_id", (error, userId) => {
+            if (error) {
+                console.log("Error while searching a user profile");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a user profile",
+                        "error": error
+                    });
+            } else {
+                console.log("User Id is: ");
+                console.log(userId);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "User Profile searched Successfully",
+                        "userId": userId.userId
+                    });
+            }
+        });
+}
+
 module.exports.deleteOneUser = (req, res, next) => {
     let body = req.body;
     UserProfile
