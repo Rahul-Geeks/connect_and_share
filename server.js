@@ -11,6 +11,8 @@ let userRoutes = require("./app/routes/user.routes");
 let userCompanyRoutes = require("./app/routes/user_company.routes");
 let mailingRoutes = require("./app/routes/mailing.routes");
 
+let mailCtrl = require("./app/controllers/mail.controller");
+
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With,x-access-token, Content-Type, Accept");
@@ -48,9 +50,13 @@ io.on('connection', (socket) => {
         console.log("Mail came to server");
         console.log(mail);
         let sendMail = {
+            "from": mail.from,
             "subject": mail.subject,
-            "msg": mail.msg
+            "message": mail.message
         }
+        let mailSave = sendMail;
+        mailSave.to = mail.to;
+        mailCtrl.saveMail(mailSave);
         io.to(mail.to).emit("new-mail", sendMail);
     });
 

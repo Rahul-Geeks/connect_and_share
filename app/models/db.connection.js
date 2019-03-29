@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 
 require("./user.model");
 require("./user_company.model");
+require("./mail.model");
 
 let options = {
     user: CONFIG.DBUSR,
