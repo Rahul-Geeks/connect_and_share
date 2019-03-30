@@ -17,6 +17,8 @@ module.exports.saveMail = (mail) => {
         "from": mail.from,
         "message": mail.message,
         "subject": mail.subject,
+        "date": mail.date,
+        "time": mail.time
     });
 
     newMail
@@ -27,6 +29,38 @@ module.exports.saveMail = (mail) => {
             } else {
                 console.log("Mail saved successfully");
                 console.log(response);
+            }
+        });
+}
+
+module.exports.getMailsForOneUser = (req, res, next) => {
+    body = req.body;
+    Mail
+        .find({ "to": body.userName })
+        // .sort({ "date": 1 })
+        .exec((error, mails) => {
+            if (error) {
+                console.log("Error while searching a user profile");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a user profile",
+                        "error": error
+                    });
+            } else if (!mails) {
+                console.log("No Mails Present");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "No Mails Present",
+                    });
+            } else {
+                console.log(mails);
+                res
+                    .status(200)
+                    .send(mails);
             }
         });
 }

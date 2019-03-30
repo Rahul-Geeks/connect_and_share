@@ -8,4 +8,8 @@ let router = express.Router();
 //     .route("/compose")
 //     .get(mailCtrl.composeMail);
 
+router
+    .route("/inbox")
+    .post(mailCtrl.getMailsForOneUser);
+
 module.exports = router;

@@ -6,6 +6,8 @@ const server = require("http").Server(app);
 const io = require("socket.io")(server);
 
 let CONFIG = require("./app/config");
+let dateTime = require("./app/shared/date_time");
+
 let authRoutes = require("./app/routes/auth.routes");
 let userRoutes = require("./app/routes/user.routes");
 let userCompanyRoutes = require("./app/routes/user_company.routes");
@@ -52,7 +54,9 @@ io.on('connection', (socket) => {
         let sendMail = {
             "from": mail.from,
             "subject": mail.subject,
-            "message": mail.message
+            "message": mail.message,
+            "date": dateTime.getDateTime().date,
+            "time": dateTime.getDateTime().time
         }
         let mailSave = sendMail;
         mailSave.to = mail.to;

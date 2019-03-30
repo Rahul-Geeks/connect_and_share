@@ -18,11 +18,11 @@ let mailSchema = new Schema({
     "subject": String,
     "date": {
         type: String,
-        "default": dateTime.getDateTime().date,
+        "required": true,
     },
     "time": {
         type: String,
-        "default": dateTime.getDateTime().time,
+        "required": true,
     }
 });
 
