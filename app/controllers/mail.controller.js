@@ -34,7 +34,9 @@ module.exports.saveMail = (mail) => {
 }
 
 module.exports.getMailsForOneUser = (req, res, next) => {
-    body = req.body;
+    let body = req.body;
+    console.log("Te body is:");
+    console.log(body);
     Mail
         .find({ "to": body.userName })
         // .sort({ "date": 1 })

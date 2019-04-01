@@ -26,7 +26,7 @@ app.use(bodyParser.json({ type: "application/json" }));
 app.use("/connect_and_share", authRoutes);
 app.use("/connect_and_share/user", userRoutes);
 app.use("/connect_and_share/company", userCompanyRoutes);
-app.use("/connect_and_share/user/mail", mailingRoutes);
+app.use("/connect_and_share/user", mailingRoutes);
 
 // io.emit('some event', { for: 'everyone' });
 
