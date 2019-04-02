@@ -12,7 +12,7 @@ let userCompanySchema = new Schema({
     },
     "companyAddress": {
         type: String,
-        required: true
+        // required: true
     },
     "areaOfWork": {
         type: String,

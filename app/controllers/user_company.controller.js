@@ -6,104 +6,140 @@ let UserCompany = mongoose.model("UserCompany");
 
 let dateTime = require("../shared/date_time");
 
-module.exports.updateIsCompanyStatus = (req, res, next) => {
+// module.exports.updateIsCompanyStatus = (req, res, next) => {
+//     let body = req.body;
+//     let userId = body.userId;
+//     let isCompany = body.isCompany;
+//     let updateStatus = {
+//         "$set": {
+//             "isCompany": isCompany
+//         }
+//     }
+//     UserProfile
+//         .updateOne({ "userId": userId }, updateStatus, (error, isUpdate) => {
+//             if (error) {
+//                 console.log("Error while updating a user profile");
+//                 console.log(error);
+//                 res
+//                     .status(404)
+//                     .send({
+//                         "auth": false,
+//                         "message": "Error while updating a user profile",
+//                         "error": error
+//                     });
+//             } else {
+//                 console.log("User Profile updated Successfully");
+//                 console.log(isUpdate);
+//                 res
+//                     .status(200)
+//                     .send({
+//                         "auth": true,
+//                         "message": "User Profile updated Successfully",
+//                     });
+//             }
+//         });
+// }
+
+module.exports.addOneCompanyForOneUser = (req, res, next) => {
     let body = req.body;
-    let userId = body.userId;
-    let isCompany = body.isCompany;
-    let updateStatus = {
-        "$set": {
-            "isCompany": isCompany
-        }
-    }
-    UserProfile
-        .updateOne({ "userId": userId }, updateStatus, (error, isUpdate) => {
+    // let isCompany = body.isCompany;
+
+    // if (isCompany === true) {
+    let newUserCompany = new UserCompany({
+        "companyName": body.companyName,
+        "companyAddress": body.companyAddress,
+        "areaOfWork": body.areaOfWork,
+        "description": body.description,
+        "userAdminId": body.userId,
+        "date": dateTime.getDateTime().date,
+        "time": dateTime.getDateTime().time,
+    });
+
+    newUserCompany
+        .save((error, response) => {
             if (error) {
-                console.log("Error while updating a user profile");
-                console.log(error);
+                console.log("Error while adding a user company");
                 res
                     .status(404)
                     .send({
                         "auth": false,
-                        "message": "Error while updating a user profile",
+                        "message": "Error while adding a user company",
                         "error": error
                     });
             } else {
-                console.log("User Profile updated Successfully");
-                console.log(isUpdate);
+                let userProfileUpdate = {
+                    "$push": {
+                        "companyId": response.companyId,
+                    }
+                }
+                UserProfile
+                    .updateOne({ "userId": body.userId }, userProfileUpdate, (error, isUpdate) => {
+                        if (error) {
+                            console.log("Error while updating a user profile");
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "Error while updating a user profile",
+                                    "error": error
+                                });
+                        } else {
+                            console.log("User Company added Successfully");
+                            console.log("User Profile Updated Successfully with adding company");
+                            res
+                                .status(200)
+                                .send({
+                                    "auth": true,
+                                    "message": "User Company added Successfully",
+                                    "response": response
+                                });
+                        }
+                    });
+            }
+        });
+    // } else {
+    //     console.log("Not Eligible for adding company. First activate your 'isCompany' status to true");
+    //     res
+    //         .status(404)
+    //         .send({
+    //             "auth": false,
+    //             "message": "Not Eligible for adding company. First activate your 'isCompany' status to true",
+    //         });
+    // }
+}
+
+module.exports.getAllUserAdminCompany = (req, res, next) => {
+    let body = req.body;
+    UserCompany
+        .find({ "companyId": { "$in": body.companyId } })
+        .exec((error, companies) => {
+            if (error) {
+                console.log("Error while searching a user Company");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a user Company",
+                        "error": error
+                    });
+            } else if (!companies) {
+                console.log("User Company with the given User Name not found");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "User Company with the given User Name not found",
+                    });
+            } else {
                 res
                     .status(200)
                     .send({
                         "auth": true,
-                        "message": "User Profile updated Successfully",
+                        "message": "Companies For the given user Found",
+                        "companies": companies
                     });
             }
         });
-}
-
-module.exports.addOneCompanyForOneUser = (req, res, next) => {
-    let body = req.body;
-    let isCompany = body.isCompany;
-
-    if (isCompany === true) {
-        let newUserCompany = new UserCompany({
-            "companyName": body.companyName,
-            "companyAddress": body.companyAddress,
-            "areaOfWork": body.areaOfWork,
-            "description": body.description,
-            "userAdminId": body.userId
-        });
-
-        newUserCompany
-            .save((error, response) => {
-                if (error) {
-                    console.log("Error while adding a user company");
-                    res
-                        .status(404)
-                        .send({
-                            "auth": false,
-                            "message": "Error while adding a user company",
-                            "error": error
-                        });
-                } else {
-                    let userProfileUpdate = {
-                        "$push": {
-                            "companyId": response.companyId,
-                        }
-                    }
-                    UserProfile
-                        .updateOne({ "userId": body.userId }, userProfileUpdate, (error, isUpdate) => {
-                            if (error) {
-                                console.log("Error while updating a user profile");
-                                res
-                                    .status(404)
-                                    .send({
-                                        "auth": false,
-                                        "message": "Error while updating a user profile",
-                                        "error": error
-                                    });
-                            } else {
-                                console.log("User Company added Successfully");
-                                console.log("User Profile Updated Successfully with adding company");
-                                res
-                                    .status(200)
-                                    .send({
-                                        "auth": true,
-                                        "message": "User Company added Successfully",
-                                        "response": response
-                                    });
-                            }
-                        });
-                }
-            });
-    } else {
-        console.log("Not Eligible for adding company. First activate your 'isCompany' status to true");
-        res
-            .status(404)
-            .send({
-                "auth": false,
-                "message": "Not Eligible for adding company. First activate your 'isCompany' status to true",
-            });
-    }
 }
 
 module.exports.addOneEmpToOneCompany = (req, res, next) => {

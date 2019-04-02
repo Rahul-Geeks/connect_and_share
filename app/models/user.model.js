@@ -31,10 +31,10 @@ let userProfileSchema = new Schema({
         type: String,
         required: true
     },
-    "isCompany": {
-        type: Boolean,
-        required: true
-    },
+    // "isCompany": {
+    //     type: Boolean,
+    //     required: true
+    // },
     "userId": {
         type: String,
         "default": shortId.generate
@@ -43,11 +43,11 @@ let userProfileSchema = new Schema({
     "empCompany": [empCompanySchema],
     "date": {
         type: String,
-        "default": dateTime.getDateTime().date,
+        required: true,
     },
     "time": {
         type: String,
-        "default": dateTime.getDateTime().time,
+        required: true,
     }
 });
 
