@@ -13,9 +13,20 @@ router
     .route("/add_company_for_user")
     .post(userCompanyCtrl.addOneCompanyForOneUser);
 
+// Get some specific fields from all the companies whose companyIds are given in an array 
 router
     .route("/get_all_user_admin_company")
     .post(userCompanyCtrl.getAllUserAdminCompany);
+
+// Get all companies for a user where he is employee
+router
+    .route("/get_empcompanies_oneuser")
+    .post(userCompanyCtrl.getAllCompanyOneUser);
+
+// Get one workspace
+router
+    .route("/get_one_workspace")
+    .post(userCompanyCtrl.getOneWorkSpace);
 
 // Adds one employee to a company workspace using their 'userId' field
 router

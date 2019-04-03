@@ -12,6 +12,7 @@ let authRoutes = require("./app/routes/auth.routes");
 let userRoutes = require("./app/routes/user.routes");
 let userCompanyRoutes = require("./app/routes/user_company.routes");
 let mailingRoutes = require("./app/routes/mailing.routes");
+let discussionRoutes = require("./app/routes/discussion.routes");
 
 let mailCtrl = require("./app/controllers/mail.controller");
 
@@ -27,6 +28,7 @@ app.use("/connect_and_share", authRoutes);
 app.use("/connect_and_share/user", userRoutes);
 app.use("/connect_and_share/company", userCompanyRoutes);
 app.use("/connect_and_share/user", mailingRoutes);
+app.use("/connect_and_share/company/discussion", discussionRoutes);
 
 // io.emit('some event', { for: 'everyone' });
 

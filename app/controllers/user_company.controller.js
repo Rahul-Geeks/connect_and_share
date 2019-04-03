@@ -110,8 +110,10 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
 
 module.exports.getAllUserAdminCompany = (req, res, next) => {
     let body = req.body;
+    console.log(body);
     UserCompany
         .find({ "companyId": { "$in": body.companyId } })
+        .select("-_id companyName areaOfWork companyId")
         .exec((error, companies) => {
             if (error) {
                 console.log("Error while searching a user Company");
@@ -122,7 +124,7 @@ module.exports.getAllUserAdminCompany = (req, res, next) => {
                         "message": "Error while searching a user Company",
                         "error": error
                     });
-            } else if (!companies) {
+            } else if (companies.length === 0) {
                 console.log("User Company with the given User Name not found");
                 res
                     .status(404)
@@ -131,12 +133,84 @@ module.exports.getAllUserAdminCompany = (req, res, next) => {
                         "message": "User Company with the given User Name not found",
                     });
             } else {
+                console.log(companies);
                 res
                     .status(200)
                     .send({
                         "auth": true,
                         "message": "Companies For the given user Found",
                         "companies": companies
+                    });
+            }
+        });
+}
+
+module.exports.getAllCompanyOneUser = (req, res, next) => {
+    let body = req.body;
+    UserProfile
+        .findOne({ "userId": body.userId })
+        .select("-_id empCompany")
+        .exec((error, response) => {
+            if (error) {
+                console.log("Error while searching a user Profile");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a user Profile",
+                        "error": error
+                    });
+            } else if (!response) {
+                console.log("User Profile with the given User Name not found");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "User Profile with the given User Name not found",
+                    });
+            } else {
+                console.log(response);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "User Employee Companies For the given user Found",
+                        "response": response.empCompany
+                    });
+            }
+        });
+}
+
+module.exports.getOneWorkSpace = (req, res, next) => {
+    let body = req.body;
+    UserCompany
+        .findOne({ "companyId": body.companyId })
+        .exec((error, company) => {
+            if (error) {
+                console.log("Error while searching a user Company");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a user Company",
+                        "error": error
+                    });
+            } else if (!company) {
+                console.log("User Company with the given User Name not found");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "User Company with the given User Name not found",
+                    });
+            } else {
+                console.log(company);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "User Company For the given user Found",
+                        "response": company
                     });
             }
         });

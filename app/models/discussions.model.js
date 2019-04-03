@@ -23,11 +23,11 @@ let discussionsSchema = new Schema({
     "empViews": [empViewsSchema],
     "date": {
         type: String,
-        default: dateTime.getDateTime().date
+        required: true
     },
     "time": {
         type: String,
-        default: dateTime.getDateTime().time
+        required: true
     }
 });
 

@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 require("./user.model");
 require("./user_company.model");
 require("./mail.model");
+require("./discussions.model");
 
 let options = {
     user: CONFIG.DBUSR,
