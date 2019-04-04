@@ -28,6 +28,7 @@ let userCompanySchema = new Schema({
         required: true
     },
     "userEmpIds": [String],
+    "userEmpNames": [String],
     "date": {
         type: String,
         "default": dateTime.getDateTime().date,

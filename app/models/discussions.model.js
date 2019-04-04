@@ -6,11 +6,16 @@ let dateTime = require("../shared/date_time");
 let Schema = mongoose.Schema;
 
 let empViewsSchema = new Schema({
-    "userId": String,
+    "userName": String,
     "view": String
 });
 
 let discussionsSchema = new Schema({
+    "discussionId": {
+        type: String,
+        required: true,
+        default: shortId.generate()
+    },
     "companyId": {
         type: String,
         required: true

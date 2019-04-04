@@ -73,3 +73,45 @@ module.exports.getAllDiscussionsOneWorkSpace = (req, res, next) => {
             }
         });
 }
+
+module.exports.addOneView = (req, res, next) => {
+    let body = req.body;
+    let updateDiscussion = {
+        "$set": {
+            "empViews": body.viewDetails
+        }
+    }
+    Discussions
+        .updateOne({ "discussionId": body.discussionId }, updateDiscussion)
+        .exec((error, response) => {
+            if (error) {
+                console.log("Error while updating a discussion document");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while updating a discussion document",
+                        "error": error
+                    });
+            } else if (response.nModified === 0) {
+                console.log("Not Updated");
+                console.log(response);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Not Updated"
+                    });
+            } else {
+                console.log("Updated Successfully");
+                console.log(response);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "Updated Successfully"
+                    });
+            }
+        });
+}

@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 let UserProfile = mongoose.model("UserProfile");
 let UserCompany = mongoose.model("UserCompany");
 
+let dateTime = require("../shared/date_time");
 let CONFIG = require("../config");
 
 module.exports.addOneUser = (req, res, next) => {
@@ -19,13 +20,15 @@ module.exports.addOneUser = (req, res, next) => {
         "userName": body.userName,
         "password": hashPassword,
         "phoneNo": body.phoneNo,
-        "isCompany": body.isCompany
+        "date": dateTime.getDateTime().date,
+        "time": dateTime.getDateTime().time
     });
 
     newUserProfile
         .save((error, response) => {
             if (error) {
                 console.log("Error while adding a user profile");
+                console.log(error);
                 res
                     .status(404)
                     .send({

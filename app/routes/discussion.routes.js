@@ -14,4 +14,9 @@ router
     .route("/getall_discussions_oneworkspace")
     .post(discussionCtrl.getAllDiscussionsOneWorkSpace);
 
+// Add one view to a particular discussion
+router
+    .route("/add_one_view")
+    .post(discussionCtrl.addOneView);
+
 module.exports = router;
