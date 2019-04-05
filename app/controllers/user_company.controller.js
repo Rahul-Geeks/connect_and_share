@@ -50,7 +50,7 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
         "companyAddress": body.companyAddress,
         "areaOfWork": body.areaOfWork,
         "description": body.description,
-        "userAdminId": body.userId,
+        "userAdminName": body.userName,
         "date": dateTime.getDateTime().date,
         "time": dateTime.getDateTime().time,
     });
@@ -170,7 +170,7 @@ module.exports.getAllUserAdminCompany = (req, res, next) => {
     //     });
 
     UserCompany
-        .find({ "userAdminId": body.userId })
+        .find({ "userAdminName": body.userName })
         .exec((error, companies) => {
             if (error) {
                 console.log("Error while searching for User Companies");
@@ -273,6 +273,10 @@ module.exports.getOneWorkSpace = (req, res, next) => {
                     });
             }
         });
+}
+
+module.exports.getAllEmpsOneWorkSpace = (req, res, next)=>{
+
 }
 
 module.exports.addOneEmpToOneCompany = (req, res, next) => {

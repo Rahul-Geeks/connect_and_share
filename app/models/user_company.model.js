@@ -23,7 +23,7 @@ let userCompanySchema = new Schema({
         type: String,
         'default': shortId.generate
     },
-    "userAdminId": {
+    "userAdminName": {
         type: String,
         required: true
     },

@@ -28,6 +28,11 @@ router
     .route("/get_one_workspace")
     .post(userCompanyCtrl.getOneWorkSpace);
 
+// Get all employees of a particular workspace
+router
+    .route("/getAllEmpsOneWorkSpace")
+    .post(userCompanyCtrl.getAllEmpsOneWorkSpace);
+
 // Adds one employee to a company workspace using their 'userId' field
 router
     .route("/add_one_emp_to_one_company")
