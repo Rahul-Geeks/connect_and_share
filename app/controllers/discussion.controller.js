@@ -11,7 +11,8 @@ module.exports.addDiscussion = (req, res, next) => {
         "description": body.description,
         "companyId": body.companyId,
         "date": dateTime.getDateTime().date,
-        "time": dateTime.getDateTime().time
+        "time": dateTime.getDateTime().time,
+        "dateTime": new Date()
     });
     newDiscussion
         .save((error, response) => {
@@ -43,6 +44,7 @@ module.exports.getAllDiscussionsOneWorkSpace = (req, res, next) => {
     let body = req.body;
     Discussions
         .find({ "companyId": body.companyId })
+        .sort([["dateTime", -1]])
         .exec((error, response) => {
             if (error) {
                 console.log("Error while searching a Discussion");
@@ -62,13 +64,44 @@ module.exports.getAllDiscussionsOneWorkSpace = (req, res, next) => {
                         "message": "Discussion with the given User Name not found",
                     });
             } else {
-                console.log(response);
+                console.log("Discussions For the given user Found");
+
+                // console.log(response);
                 res
                     .status(200)
                     .send({
                         "auth": true,
                         "message": "Discussions For the given user Found",
                         "response": response
+                    });
+            }
+        });
+}
+
+module.exports.getOneDiscussion = (req, res, next) => {
+    let body = req.body;
+    Discussions
+        .findOne({ "discussionId": body.discussionId })
+        .exec((error, discussion) => {
+            if (error) {
+                console.log("Error while searching a Discussion");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching a Discussion",
+                        "error": error
+                    });
+            } else {
+                console.log("Discussion Found");
+                // console.log(response);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "Discussion Found",
+                        "response": discussion
                     });
             }
         });
@@ -112,6 +145,30 @@ module.exports.addOneView = (req, res, next) => {
                         "auth": true,
                         "message": "Updated Successfully"
                     });
+            }
+        });
+}
+
+module.exports.saveViewsToWorkSpace = (body) => {
+    let viewDetails = {
+        "$push": {
+            "empViews": {
+                "view": body.view,
+                "userName": body.userName
+            }
+        }
+    }
+    Discussions
+        .updateOne({ "discussionId": body.discussionId }, viewDetails, (error, isUpdate) => {
+            if (error) {
+                console.log("Error while updating a discussion document");
+                console.log(error);
+            } else if (isUpdate.nModified === 0) {
+                console.log("Not Updated");
+                console.log(isUpdate);
+            } else {
+                console.log("Updated Successfully");
+                console.log(isUpdate);
             }
         });
 }

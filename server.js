@@ -15,6 +15,7 @@ let mailingRoutes = require("./app/routes/mailing.routes");
 let discussionRoutes = require("./app/routes/discussion.routes");
 
 let mailCtrl = require("./app/controllers/mail.controller");
+let discussionCtlr = require("./app/controllers/discussion.controller");
 
 app.use(function (req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -105,6 +106,18 @@ io.on('connection', (socket) => {
         console.log(obj);
         io.to(obj.userId).emit("my-message", obj);
         // io.sockets.in(obj.userId).emit("message-to-one", obj.array[1]);
+    });
+
+    socket.on("join-group", (discussionId) => {
+        console.log("Trying to join group");
+        console.log(discussionId);
+        socket.join(discussionId);
+    });
+
+    socket.on("group-msg", (obj) => {
+        console.log(obj);
+        discussionCtlr.saveViewsToWorkSpace(obj);
+        io.to(obj.discussionId).emit("recieve-grp-msg", obj);
     });
 
     // // when the client emits 'stop typing', we broadcast it to others

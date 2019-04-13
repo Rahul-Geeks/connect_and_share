@@ -66,3 +66,38 @@ module.exports.getMailsForOneUser = (req, res, next) => {
             }
         });
 }
+
+module.exports.getSentMailsForOneUser = (req, res, next) => {
+    let body = req.body;
+    Mail
+        .find({ "from": body.userName })
+        .exec((error, mails) => {
+            if (error) {
+                console.log("Error while searching mails");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching mails",
+                        "error": error
+                    });
+            } else if (!mails) {
+                console.log("No Mails Present");
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "No Mails Present",
+                    });
+            } else {
+                console.log(mails);
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "Mails Found Successfully",
+                        "response": mails
+                    });
+            }
+        });
+}

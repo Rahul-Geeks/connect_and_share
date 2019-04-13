@@ -8,6 +8,36 @@ let UserCompany = mongoose.model("UserCompany");
 let dateTime = require("../shared/date_time");
 let CONFIG = require("../config");
 
+module.exports.tokenValidator = (req, res, next) => {
+    let token = req.headers["x-access-token"];
+    if (!token) {
+        console.log("No token provided");
+        res
+            .status(404)
+            .send({
+                "auth": false,
+                "message": "No token provided"
+            })
+    } else {
+        jwt.verify(token, CONFIG.SCRTKEY, (error, response) => {
+            if (error) {
+                console.log("Invalid Token");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Invalid Token",
+                        "error": error
+                    });
+            } else {
+                console.log("Valid Token");
+                next();
+            }
+        });
+    }
+}
+
 module.exports.addOneUser = (req, res, next) => {
     let body = req.body;
 

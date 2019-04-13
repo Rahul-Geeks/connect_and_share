@@ -6,45 +6,8 @@ let UserCompany = mongoose.model("UserCompany");
 
 let dateTime = require("../shared/date_time");
 
-// module.exports.updateIsCompanyStatus = (req, res, next) => {
-//     let body = req.body;
-//     let userId = body.userId;
-//     let isCompany = body.isCompany;
-//     let updateStatus = {
-//         "$set": {
-//             "isCompany": isCompany
-//         }
-//     }
-//     UserProfile
-//         .updateOne({ "userId": userId }, updateStatus, (error, isUpdate) => {
-//             if (error) {
-//                 console.log("Error while updating a user profile");
-//                 console.log(error);
-//                 res
-//                     .status(404)
-//                     .send({
-//                         "auth": false,
-//                         "message": "Error while updating a user profile",
-//                         "error": error
-//                     });
-//             } else {
-//                 console.log("User Profile updated Successfully");
-//                 console.log(isUpdate);
-//                 res
-//                     .status(200)
-//                     .send({
-//                         "auth": true,
-//                         "message": "User Profile updated Successfully",
-//                     });
-//             }
-//         });
-// }
-
 module.exports.addOneCompanyForOneUser = (req, res, next) => {
     let body = req.body;
-    // let isCompany = body.isCompany;
-
-    // if (isCompany === true) {
     let newUserCompany = new UserCompany({
         "companyName": body.companyName,
         "companyAddress": body.companyAddress,
@@ -73,7 +36,7 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
                     }
                 }
                 UserProfile
-                    .updateOne({ "userId": body.userId }, userProfileUpdate, (error, isUpdate) => {
+                    .updateOne({ "userName": body.userName }, userProfileUpdate, (error, isUpdate) => {
                         if (error) {
                             console.log("Error while updating a user profile");
                             res
@@ -83,6 +46,15 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
                                     "message": "Error while updating a user profile",
                                     "error": error
                                 });
+                        } else if (isUpdate.nModified == 0) {
+                            console.log("The User profile is not updated");
+                            console.log(isUpdate);
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "The User profile is not updated"
+                                })
                         } else {
                             console.log("User Company added Successfully");
                             console.log("User Profile Updated Successfully with adding company");
@@ -97,77 +69,11 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
                     });
             }
         });
-    // } else {
-    //     console.log("Not Eligible for adding company. First activate your 'isCompany' status to true");
-    //     res
-    //         .status(404)
-    //         .send({
-    //             "auth": false,
-    //             "message": "Not Eligible for adding company. First activate your 'isCompany' status to true",
-    //         });
-    // }
 }
 
 module.exports.getAllUserAdminCompany = (req, res, next) => {
     let body = req.body;
     console.log(body);
-    // UserProfile
-    //     .findOne({ "userId": body.userId })
-    //     .select("companyId")
-    //     .exec((error, response) => {
-    //         if (error) {
-    //             console.log("Error while searching a user Company");
-    //             res
-    //                 .status(404)
-    //                 .send({
-    //                     "auth": false,
-    //                     "message": "Error while searching a user Company",
-    //                     "error": error
-    //                 });
-    //         } else if (!response) {
-    //             console.log("User Profile with the given User Name not found");
-    //             res
-    //                 .status(404)
-    //                 .send({
-    //                     "auth": false,
-    //                     "message": "User Profile with the given User Name not found",
-    //                 });
-    //         } else {
-    //             console.log("User Profile Found. Looking for his admin companies.");
-    //             UserCompany
-    //                 .find({ "companyId": { "$in": response.companyId } })
-    //                 .select("-_id companyName areaOfWork companyId")
-    //                 .exec((error, companies) => {
-    //                     if (error) {
-    //                         console.log("Error while searching a user Company");
-    //                         res
-    //                             .status(404)
-    //                             .send({
-    //                                 "auth": false,
-    //                                 "message": "Error while searching a user Company",
-    //                                 "error": error
-    //                             });
-    //                     } else if (companies.length === 0) {
-    //                         console.log("User Company with the given User Name not found");
-    //                         res
-    //                             .status(404)
-    //                             .send({
-    //                                 "auth": false,
-    //                                 "message": "User Company with the given User Name not found",
-    //                             });
-    //                     } else {
-    //                         console.log(companies);
-    //                         res
-    //                             .status(200)
-    //                             .send({
-    //                                 "auth": true,
-    //                                 "message": "Companies For the given user Found",
-    //                                 "companies": companies
-    //                             });
-    //                     }
-    //                 });
-    //         }
-    //     });
 
     UserCompany
         .find({ "userAdminName": body.userName })
@@ -182,7 +88,7 @@ module.exports.getAllUserAdminCompany = (req, res, next) => {
                         "message": "Error while searching for User Companies",
                         "error": error
                     });
-            } if (companies.length === 0) {
+            } if (!companies) {
                 console.log("Their are no companies present with the given userAdminId");
                 res
                     .status(404)
@@ -207,7 +113,7 @@ module.exports.getAllUserAdminCompany = (req, res, next) => {
 module.exports.getAllCompanyOneUser = (req, res, next) => {
     let body = req.body;
     UserProfile
-        .findOne({ "userId": body.userId })
+        .findOne({ "userName": body.userName })
         .select("-_id empCompany")
         .exec((error, response) => {
             if (error) {
@@ -247,6 +153,7 @@ module.exports.getOneWorkSpace = (req, res, next) => {
         .exec((error, company) => {
             if (error) {
                 console.log("Error while searching a user Company");
+                console.log(error);
                 res
                     .status(404)
                     .send({
@@ -263,7 +170,8 @@ module.exports.getOneWorkSpace = (req, res, next) => {
                         "message": "User Company with the given User Name not found",
                     });
             } else {
-                console.log(company);
+                console.log("User Company For the given user Found");
+                // console.log(company);
                 res
                     .status(200)
                     .send({
@@ -275,125 +183,61 @@ module.exports.getOneWorkSpace = (req, res, next) => {
         });
 }
 
-module.exports.getAllEmpsOneWorkSpace = (req, res, next)=>{
-
+module.exports.getAllEmpsOneWorkSpace = (req, res, next) => {
+    let body = req.body;
+    UserCompany
+        .find({ "companyId": body.companyId })
+        .select("-_id userEmpNames")
+        .exec((error, response) => {
+            if (error) {
+                console.log("Error while searching user company");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching user company"
+                    });
+            } else {
+                console.log("User Found Successfully");
+                console.log(response);
+                let userNames = [];
+                response.find((element) => {
+                    console.log(typeof (element));
+                    userNames.push(element.userEmpNames);
+                });
+                console.log(userNames);
+                UserProfile
+                    .find({ "userName": { "$in": userNames[0] } })
+                    .select("-_id name userName")
+                    .exec((error, userProfiles) => {
+                        if (error) {
+                            console.log("Error while searching user profiles");
+                            console.log(error);
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "Error while searching user profiles"
+                                });
+                        } else {
+                            console.log("User Profiles Searched successfully");
+                            console.log(userProfiles);
+                            res
+                                .status(200)
+                                .send({
+                                    "auth": true,
+                                    "message": "User Profiles Searched successfully",
+                                    "userProfiles": userProfiles
+                                });
+                        }
+                    });
+            }
+        });
 }
 
 module.exports.addOneEmpToOneCompany = (req, res, next) => {
     let body = req.body;
-    // UserCompany
-    //     .findOne({ "companyId": body.companyId, "userEmpIds": { "$in": body.userId } }, (error, company) => {
-    //         if (error) {
-    //             console.log("Error while searching a user company");
-    //             res
-    //                 .status(404)
-    //                 .send({
-    //                     "auth": false,
-    //                     "message": "Error while searching a user company",
-    //                     "error": error
-    //                 });
-    //         } else if (company) {
-    //             console.log("The User name is already present in the company document");
-    //             res
-    //                 .status(404)
-    //                 .send({
-    //                     "auth": false,
-    //                     "message": "The User name is already present in the company document"
-    //                 })
-    //         } else {
-    //             UserProfile
-    //                 .findOne({ "userName": body.userName }, (error, user) => {
-    //                     if (error) {
-    //                         console.log("Error while searching a user profile");
-    //                         res
-    //                             .status(404)
-    //                             .send({
-    //                                 "auth": false,
-    //                                 "message": "Error while searching a user profile",
-    //                                 "error": error
-    //                             });
-    //                     } else if (!user) {
-    //                         console.log("User Profile with the given User Name not found");
-    //                         res
-    //                             .status(404)
-    //                             .send({
-    //                                 "auth": false,
-    //                                 "message": "User Profile with the given User Name not found",
-    //                             });
-    //                     } else {
-    //                         let isEmp = company.userEmp.find((element) => {
-    //                             if (element.userName === body.userName) {
-    //                                 console.log("Its present");
-    //                                 return true;
-    //                             }
-    //                         });
-    //                         if (isEmp != true) {
-    //                             let updateCompany = {
-    //                                 "userEmpIds": {
-    //                                     "$push": body.userId
-    //                                 }
-    //                             }
-    //                             UserCompany
-    //                                 .updateOne({ "companyId": body.companyId, "userEmpIds": { "$in": body.userId } }, updateCompany, (error, isCompanyUpdate) => {
-    //                                     if (error) {
-    //                                         console.log("Error while updating a user company");
-    //                                         res
-    //                                             .status(404)
-    //                                             .send({
-    //                                                 "auth": false,
-    //                                                 "message": "Error while updating a user company",
-    //                                                 "error": error
-    //                                             });
-    //                                     } else {
-    //                                         console.log("User Company updated Successfully");
-    //                                         let updateUser = {
-    //                                             "$push": {
-    //                                                 "empCompany": {
-    //                                                     "companyId": company.companyId,
-    //                                                     "designation": body.designation,
-    //                                                     "companyName": company.companyName,
-    //                                                     "currentlyWorking": true,
-    //                                                     "joiningDate": dateTime.getDateTime().date,
-    //                                                     "joiningTime": dateTime.getDateTime().time
-    //                                                 }
-    //                                             }
-    //                                         }
-    //                                         UserProfile
-    //                                             .updateOne({ "userName": body.userName }, updateUser, (error, isUserUpdate) => {
-    //                                                 if (error) {
-    //                                                     console.log("Error while updating a user profile");
-    //                                                     res
-    //                                                         .status(404)
-    //                                                         .send({
-    //                                                             "auth": false,
-    //                                                             "message": "Error while updating a user profile",
-    //                                                             "error": error
-    //                                                         });
-    //                                                 } else {
-    //                                                     console.log("User Profile updated Successfully");
-    //                                                     res
-    //                                                         .status(200)
-    //                                                         .send({
-    //                                                             "auth": true,
-    //                                                             "message": "User Company and User Profile updated Successfully"
-    //                                                         });
-    //                                                 }
-    //                                             });
-    //                                     }
-    //                                 });
-    //                         } else {
-    //                             console.log("The User name is already present in the company document");
-    //                             res
-    //                                 .status(404)
-    //                                 .send({
-    //                                     "auth": false,
-    //                                     "message": "The User name is already present in the company document"
-    //                                 });
-    //                         }
-    //                     }
-    //                 });
-    //         }
-    //     });
 
     UserProfile
         .findOne({ "userName": body.userName }, (error, user) => {

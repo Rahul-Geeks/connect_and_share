@@ -33,6 +33,10 @@ let discussionsSchema = new Schema({
     "time": {
         type: String,
         required: true
+    },
+    "dateTime": {
+        type: String,
+        required: true
     }
 });
 
