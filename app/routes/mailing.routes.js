@@ -17,4 +17,8 @@ router
     .route("/sent")
     .post(authCtrl.tokenValidator, mailCtrl.getSentMailsForOneUser);
 
+// router
+//     .route("/upload")
+//     .post(mailCtrl.upload);
+
 module.exports = router;

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const shortId = require("shortid");
 
 let dateTime = require("../shared/date_time");
 
@@ -7,14 +6,14 @@ let Schema = mongoose.Schema;
 
 let empViewsSchema = new Schema({
     "userName": String,
-    "view": String
+    "view": String,
+    "name": String
 });
 
 let discussionsSchema = new Schema({
     "discussionId": {
         type: String,
         required: true,
-        default: shortId.generate()
     },
     "companyId": {
         type: String,

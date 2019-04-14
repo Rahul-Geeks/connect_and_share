@@ -4,6 +4,7 @@ let UserProfile = mongoose.model("UserProfile");
 
 module.exports.getOneUser = (req, res, next) => {
     let body = req.body;
+    console.log(body);
     UserProfile
         .findOne({ "userId": body.userId }, (error, user) => {
             if (error) {

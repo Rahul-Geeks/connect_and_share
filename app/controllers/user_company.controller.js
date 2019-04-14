@@ -209,7 +209,7 @@ module.exports.getAllEmpsOneWorkSpace = (req, res, next) => {
                 console.log(userNames);
                 UserProfile
                     .find({ "userName": { "$in": userNames[0] } })
-                    .select("-_id name userName")
+                    .select("-_id name userName userId")
                     .exec((error, userProfiles) => {
                         if (error) {
                             console.log("Error while searching user profiles");
@@ -370,6 +370,34 @@ module.exports.removeEmpFromCompany = (req, res, next) => {
                     .send({
                         "auth": true,
                         "message": "The given user name/s of employee/s are successfully removed from the given company"
+                    });
+            }
+        });
+}
+
+module.exports.getWorkSpaceAdmin = (req, res, next) => {
+    let body = req.body;
+    UserCompany
+        .findOne({ "companyId": body.companyId })
+        .select("-_id userAdminName")
+        .exec((error, response) => {
+            if (error) {
+                console.log("Error while searching user company");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching user company"
+                    });
+            } else {
+                console.log("User company Searched successfully");
+                res
+                    .status(200)
+                    .send({
+                        "auth": true,
+                        "message": "User company Searched successfully",
+                        "response": response
                     });
             }
         });

@@ -2,6 +2,7 @@ const path = require("path");
 const mongoose = require("mongoose");
 
 let Mail = mongoose.model("Mail");
+const incomingForm = require("formidable").IncomingForm;
 
 module.exports.composeMail = (req, res, next) => {
     let resolve = path.resolve("index.html");
@@ -101,3 +102,19 @@ module.exports.getSentMailsForOneUser = (req, res, next) => {
             }
         });
 }
+
+// module.exports.upload = (req, res, next)=>{
+//     let form = new incomingForm();
+//     form.on("file", (field, file)=>{
+//         Mail
+//         .u
+//     });
+//     form.on("end", ()=>{
+//         res
+//         .status(200)
+//         .send({
+//             "auth": true,
+//             "message": "File successfully uploaded"
+//         });
+//     })
+// }

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 let Discussions = mongoose.model("Discussions");
 let dateTime = require("../shared/date_time");
+const shortId = require("shortid");
 
 module.exports.addDiscussion = (req, res, next) => {
     let body = req.body;
@@ -12,7 +13,8 @@ module.exports.addDiscussion = (req, res, next) => {
         "companyId": body.companyId,
         "date": dateTime.getDateTime().date,
         "time": dateTime.getDateTime().time,
-        "dateTime": new Date()
+        "dateTime": new Date(),
+        "discussionId": shortId.generate()
     });
     newDiscussion
         .save((error, response) => {
@@ -154,7 +156,8 @@ module.exports.saveViewsToWorkSpace = (body) => {
         "$push": {
             "empViews": {
                 "view": body.view,
-                "userName": body.userName
+                "userName": body.userName,
+                "name": body.name
             }
         }
     }
@@ -169,6 +172,67 @@ module.exports.saveViewsToWorkSpace = (body) => {
             } else {
                 console.log("Updated Successfully");
                 console.log(isUpdate);
+            }
+        });
+}
+
+module.exports.deleteView = (req, res, next) => {
+    let body = req.body;
+    console.log(body);
+    Discussions
+        .findOne({ "discussionId": body.discussionId })
+        .exec((error, response) => {
+            if (error) {
+                console.log("Error while searching the discussion document");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching the discussion document",
+                        "error": error
+                    });
+            } else {
+                console.log(response);
+                console.log("The discussion searched");
+                let view = response.empViews.find((element) => {
+                    console.log("id is", element._id);
+                    return element._id == body._id
+                });
+                console.log(view);
+                Discussions
+                    .updateOne({ "discussionId": body.discussionId }, { "$pull": { "empViews": view } })
+                    .exec((error, response2) => {
+                        if (error) {
+                            console.log("Error while updating the discussion document");
+                            console.log(error);
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "Error while updating the discussion document",
+                                    "error": error
+                                });
+                        } else if(response2.nModified == 0){
+                            console.log("View not deleted");
+                            console.log(response2);
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "View not deleted"
+                                });
+                        } else {
+                            console.log("View deleted successfully");
+                            console.log(response2);
+                            res
+                                .status(200)
+                                .send({
+                                    "auth": true,
+                                    "message": "View deleted successfully"
+                                });
+                        }
+                    });
             }
         });
 }

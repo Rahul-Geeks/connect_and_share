@@ -109,7 +109,7 @@ module.exports.userLogin = (req, res, next) => {
                 let isUserAuth = bcrypt.compareSync(body.password, user.password);
                 if (isUserAuth) {
                     console.log("User authentication successfull");
-                    let token = jwt.sign({ _id: user._id }, CONFIG.SCRTKEY, { expiresIn: 43200 });
+                    let token = jwt.sign({ _id: user._id }, CONFIG.SCRTKEY);
                     res
                         .status(200)
                         .send({

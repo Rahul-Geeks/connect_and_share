@@ -39,4 +39,8 @@ router
     .route("/remove_emp_from_one_company")
     .post(authCtrl.tokenValidator, userCompanyCtrl.removeEmpFromCompany);
 
+router
+    .route("/getWorkSpaceAdmin")
+    .post(userCompanyCtrl.getWorkSpaceAdmin);
+
 module.exports = router;

@@ -25,4 +25,7 @@ router
     .route("/add_one_view")
     .post(authCtrl.tokenValidator, discussionCtrl.addOneView);
 
+router
+    .route("/deleteView")
+    .post(discussionCtrl.deleteView);
 module.exports = router;
