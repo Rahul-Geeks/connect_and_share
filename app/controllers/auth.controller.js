@@ -57,15 +57,27 @@ module.exports.addOneUser = (req, res, next) => {
     newUserProfile
         .save((error, response) => {
             if (error) {
-                console.log("Error while adding a user profile");
-                console.log(error);
-                res
-                    .status(404)
-                    .send({
-                        "auth": false,
-                        "message": "Error while adding a user profile",
-                        "error": error
-                    });
+                if (error.errmsg.includes("duplicate")) {
+                    console.log("User already exists with the given username");
+                    console.log(error);
+                    res
+                        .status(404)
+                        .send({
+                            "auth": false,
+                            "message": "User already exists with the given username",
+                            "error": error
+                        });
+                } else {
+                    console.log("Error while adding a user profile");
+                    console.log(error);
+                    res
+                        .status(404)
+                        .send({
+                            "auth": false,
+                            "message": "Error while adding a user profile",
+                            "error": error
+                        });
+                }
             } else {
                 console.log("User Profile added Successfully");
                 res

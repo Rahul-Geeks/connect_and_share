@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 
 let Discussions = mongoose.model("Discussions");
+let UserProfile = mongoose.model("UserProfile");
 let dateTime = require("../shared/date_time");
 const shortId = require("shortid");
 
@@ -213,7 +214,7 @@ module.exports.deleteView = (req, res, next) => {
                                     "message": "Error while updating the discussion document",
                                     "error": error
                                 });
-                        } else if(response2.nModified == 0){
+                        } else if (response2.nModified == 0) {
                             console.log("View not deleted");
                             console.log(response2);
                             res
@@ -230,6 +231,59 @@ module.exports.deleteView = (req, res, next) => {
                                 .send({
                                     "auth": true,
                                     "message": "View deleted successfully"
+                                });
+                        }
+                    });
+            }
+        });
+}
+
+module.exports.getCurrentDiscussion = (req, res, next) => {
+    let body = req.body;
+    console.log(body);
+    UserProfile
+        .findOne({ "userId": body.userId })
+        .exec((error, response1) => {
+            if (error) {
+                console.log("Error while searching for a user profile document");
+                console.log(error);
+                res
+                    .status(404)
+                    .send({
+                        "auth": false,
+                        "message": "Error while searching for a user profile document",
+                        "error": error
+                    });
+            } else {
+                console.log("User Profile searched successfully");
+                console.log(response1);
+                let companyId = response1.companyId;
+                response1.empCompany.find((element)=>{
+                    companyId.push(element.companyId);
+                });
+                Discussions
+                    .find({ "companyId": { "$in": companyId } })
+                    .sort([["dateTime", -1]])
+                    .limit(3)
+                    .exec((error, response) => {
+                        if (error) {
+                            console.log("Error while searching for current three discussion documents");
+                            console.log(error);
+                            res
+                                .status(404)
+                                .send({
+                                    "auth": false,
+                                    "message": "Error while searching for current three discussion documents",
+                                    "error": error
+                                });
+                        } else {
+                            console.log("Current docs searched successfully");
+                            res
+                                .status(200)
+                                .send({
+                                    "auth": true,
+                                    "message": "Current docs searched successfully",
+                                    "response": response
                                 });
                         }
                     });

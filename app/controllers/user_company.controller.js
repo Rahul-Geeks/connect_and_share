@@ -22,6 +22,7 @@ module.exports.addOneCompanyForOneUser = (req, res, next) => {
         .save((error, response) => {
             if (error) {
                 console.log("Error while adding a user company");
+                console.log(error);
                 res
                     .status(404)
                     .send({

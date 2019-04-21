@@ -31,10 +31,6 @@ let userProfileSchema = new Schema({
         type: String,
         required: true
     },
-    // "isCompany": {
-    //     type: Boolean,
-    //     required: true
-    // },
     "userId": {
         type: String,
         "default": shortId.generate

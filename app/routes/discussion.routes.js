@@ -28,4 +28,8 @@ router
 router
     .route("/deleteView")
     .post(discussionCtrl.deleteView);
+
+router
+    .route("/getCurrentDiscussion")
+    .post(discussionCtrl.getCurrentDiscussion);
 module.exports = router;
